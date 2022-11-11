@@ -1,0 +1,5 @@
+# python virtual environment folder
+env/
+
+secrets.py
+app_secrets.py

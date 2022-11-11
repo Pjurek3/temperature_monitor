@@ -1,0 +1,11 @@
+V0.0.4 - minor
+* updated secrets back to secrets.py.  Didn't like app_secrets.py.
+* updated api key
+
+V0.0.2 - updated to initial production tool
+* added connection to adafruit IO
+* added process which cycles the temp reading
+* built out adafruit io interface
+
+V0.0.1 - Initial logic
+* this is the initial logic with simple printout on demand
