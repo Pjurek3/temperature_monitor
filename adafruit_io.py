@@ -17,6 +17,9 @@ class AdafruitIO:
         self.username = username
         self.key = key
         self.base_url = base_url
+        self.headers = {'x-aio-key': self.key,
+                'Content-Type': 'application/json',
+                }
     
     def send(self, value, url):
         """sends the data to adafruit IO.  feed_url is optional and will be derived from
@@ -30,9 +33,15 @@ class AdafruitIO:
         # builds this out since we don't want the user to provide entire url...
         # maybe we shoudl... to be determined
         feed_url = self.base_url + str(self.username) + url
-        headers = {'x-aio-key': self.key,
-                'Content-Type': 'application/json',
-                }
         data = {'value': value}
-        response = urequests.post(url=feed_url, headers=headers, data=ujson.dumps(data))
+        response = urequests.post(url=feed_url, headers=self.headers, data=ujson.dumps(data))
+        print('api post status code: {}'.format(response.status_code))
+    
+    def send_multiple(self, data, url):
+        """sends multiple records up to adafruit IO. 
+        data expected to be in form of list of dicts...
+        [{"value":1, "created_at": "datetime"}]"""
+        feed_url = self.base_url + str(self.username) + url +'/batch'
+        data = {'value': value}
+        response = urequests.post(url=feed_url, headers=self.headers, data=ujson.dumps(data))
         print('api post status code: {}'.format(response.status_code))

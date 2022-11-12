@@ -10,4 +10,4 @@ scl_pin = 4
 sda_pin = 5 
 
 # defines time in seconds between reading
-seconds_between_readings = 60
+time_between_readings = 10
