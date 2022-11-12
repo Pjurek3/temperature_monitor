@@ -6,6 +6,7 @@ from adafruit_io import AdafruitIO
 from sht40_micropython import SHT40, __version__
 
 import secrets
+import config
 
 # scl -> yellow wire
 # sda -> blue wire
@@ -16,7 +17,7 @@ import secrets
 
 led = machine.Pin(2, machine.Pin.OUT)
 
-sht40 = SHT40(scl_pin=4, sda_pin=5, freq=115200)
+sht40 = SHT40(scl_pin=config.scl_pin, sda_pin=config.sda_pin, freq=config.board_baud_rate)
 results = sht40.measure()
 
 print('version: {}'.format(__version__))
@@ -39,4 +40,4 @@ while True:
     aio.send(value=results[1], url = url_temperature)
     led.value(1)
 
-    time.sleep(60)
+    time.sleep(config.time_between_readings)
