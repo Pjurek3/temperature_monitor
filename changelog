@@ -1,3 +1,7 @@
+V0.0.5
+* added deep sleep to boot to control when we don't have wifi
+* removed code to write to text file since this was causing issues (too much memory)
+
 V0.0.4 - minor
 * updated secrets back to secrets.py.  Didn't like app_secrets.py.
 * updated api key

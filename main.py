@@ -47,8 +47,10 @@ while True:
     led.value(0)
 
     results = sht40.measure()
+    """
     with open('data.txt', 'a+') as f:
         f.write('{}, {}, {}\n'.format(results[0], results[1], time.localtime()))
+    """
     aio.send(value=results[0], url = url_humidity)
     aio.send(value=results[1], url = url_temperature)
     led.value(1)

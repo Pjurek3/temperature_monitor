@@ -6,6 +6,17 @@ gc.collect()
 import network
 import time
 import machine
+import ntptime
+
+def deep_sleep(msecs):
+  #configure RTC.ALARM0 to be able to wake the device
+  # thank you to: https://randomnerdtutorials.com/micropython-esp8266-deep-sleep-wake-up-sources/
+  rtc = machine.RTC()
+  rtc.irq(trigger=rtc.ALARM0, wake=machine.DEEPSLEEP)
+  # set RTC.ALARM0 to fire after Xmilliseconds, waking the device
+  rtc.alarm(rtc.ALARM0, msecs)
+  #put the device to sleep
+  machine.deepsleep()
 
 
 sta_if = network.WLAN(network.STA_IF); 
@@ -38,4 +49,9 @@ for connection in connections:
     if sta_if.isconnected():
         break
     else:
-        raise OSError('Connection could not be made.\n')
+        print('Connection could not be made... going to sleep for 30 minutes')
+        deep_sleep(30 * 60 * 1000)
+
+
+# TODO -> figure out how to sync this with my timezone
+ntptime.settime()
