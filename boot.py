@@ -19,7 +19,7 @@ def deep_sleep(msecs):
   machine.deepsleep()
 
 
-sta_if = network.WLAN(network.STA_IF); 
+sta_if = network.WLAN(network.STA_IF)
 sta_if.active(True)
 
 ap_if = network.WLAN(network.AP_IF)
@@ -50,7 +50,6 @@ for connection in connections:
         break
     else:
         print('Connection could not be made... going to sleep for 30 minutes')
-        deep_sleep(30 * 60 * 1000)
 
 
 # TODO -> figure out how to sync this with my timezone

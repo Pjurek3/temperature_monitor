@@ -1,6 +1,9 @@
 V0.0.5
 * added deep sleep to boot to control when we don't have wifi
 * removed code to write to text file since this was causing issues (too much memory)
+* moved internet check to main from boot.  This is because otherwise, we would never be able to boot unless we were on registered wifi.
+* added pin 14 disconnect to repl.  This allows nodemcu to skip program and go right to repl for dev.  
+* added watchdog timer (built in) around sensor reading and http requests to reset when it gets hung
 
 V0.0.4 - minor
 * updated secrets back to secrets.py.  Didn't like app_secrets.py.
