@@ -30,6 +30,7 @@ pms5003_set = machine.Pin(config.pms5003_pins['set'], machine.Pin.OUT)
     
 if skip_pin.value() < 1:
   print('repl pin is set.... exiting to repl and skipping program')
+  # connect the pin to power to run code, disconnect to skip code
   sys.exit()
 
 
@@ -94,25 +95,45 @@ while True:
     with open('data.txt', 'a+') as f:
         f.write('{}, {}, {}\n'.format(results[0], results[1], time.localtime()))
     """
+    
+    # blink led once to indicate we received data
+    led.value(1)
+    time.sleep(0.5)
+    led.value(0)
+    
     aio.send(value=results[0], url = url_humidity)
     wdt.feed()
     aio.send(value=results[1], url = url_temperature)
+    
+    # blink led once to indicate we received data
     led.value(1)
+    time.sleep(0.5)
+    led.value(0)
+    time.sleep(0.5)
+    led.value(1)
+    time.sleep(0.5)
+    led.value(0)
+    
     wdt.feed()
     gc.collect()
+    
     
     #now PMS5003 reading
     print("blinking light to start")
     led.value(0)
+    wdt.feed()
     time.sleep(0.5)
     led.value(1)
+    wdt.feed()
     time.sleep(0.5)
     led.value(0)
     time.sleep(0.5)
     led.value()
     #f.write(r'starting loop\n')
     led.value(0)
+    wdt.feed()
 
+    """
     print("activating active mode")
     pms5003_set.value(1)
 
@@ -120,15 +141,21 @@ while True:
     print("turn on led light")
 
     # waiting 10 seconds for process to stabilize before reading
-    time.sleep(10)
+    for i in range(10):
+      time.sleep(1)
+      wdt.feed()
 
     process_data(n=config.avg_data_points)
+    wdt.feed()
 
     led.value(1)
 
     print("put passive mode")
     pms5003_set.value(0)
+    wdt.feed()
     
     
+    """
+    gc.collect()
     # multiply by 1000 to convert expected input to seconds since function expects ms
     deep_sleep(config.time_between_readings*1000)

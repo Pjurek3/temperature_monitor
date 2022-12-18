@@ -14,43 +14,44 @@ import struct
 import ujson
 import urequests
 import secrets
+import config
 
 def get_reading():
     print('get_reading')
-	uos.dupterm(None, 1)
-	uart = UART(0)
-	uart.init(9600, bits=8, parity=None, stop=1, timeout=1000, timeout_char=2000)
-	counter = 0
-	counter_limit = 50
-	buffer = bytearray(32)
-	while True:
-		output = uart.read(1)
-		datastr = ''.join([chr(b) for b in output])
-		if not output:
-			raise RuntimeError('unable to read from PMS5003')
-		
-		if output[0] == 0x42:
-			break	
+    uos.dupterm(None, 1)
+    uart = UART(0)
+    uart.init(9600, bits=8, parity=None, stop=1, timeout=1000, timeout_char=2000)
+    counter = 0
+    counter_limit = 50
+    buffer = bytearray(32)
+    while True:
+        output = uart.read(1)
+        datastr = ''.join([chr(b) for b in output])
+        if not output:
+            raise RuntimeError('unable to read from PMS5003')
+        
+        if output[0] == 0x42:
+            break	
 
         print(output)	
 
-	buffer[0] = output[0]
-	remain = uart.read(31)
-	if not remain or len(remain) != 31:
-		raise RuntimeError("Unable to read from PM2.5 (incomplete frame)")
-	buffer[1:] = remain
-	print(buffer)
-	
-	if not buffer[0:2] == b"BM":
-		raise RuntimeError("Invalid PM2.5 header")
-		
-	frame_len = struct.unpack(">H", buffer[2:4])[0]
-	if frame_len != 28:
-		raise RuntimeError("Invalid PM2.5 frame length")
-		
-	checksum = struct.unpack(">H", buffer[30:32])[0]
-	check = sum(buffer[0:30])
-	aqi_reading = {
+    buffer[0] = output[0]
+    remain = uart.read(31)
+    if not remain or len(remain) != 31:
+        raise RuntimeError("Unable to read from PM2.5 (incomplete frame)")
+    buffer[1:] = remain
+    print(buffer)
+    
+    if not buffer[0:2] == b"BM":
+        raise RuntimeError("Invalid PM2.5 header")
+        
+    frame_len = struct.unpack(">H", buffer[2:4])[0]
+    if frame_len != 28:
+        raise RuntimeError("Invalid PM2.5 frame length")
+        
+    checksum = struct.unpack(">H", buffer[30:32])[0]
+    check = sum(buffer[0:30])
+    aqi_reading = {
             "pm10 standard": None,
             "pm25 standard": None,
             "pm100 standard": None,
@@ -63,23 +64,23 @@ def get_reading():
             "particles 25um": None,
             "particles 50um": None,
             "particles 100um": None,}
-	
-	(aqi_reading["pm10 standard"],
-	aqi_reading["pm25 standard"],
-	aqi_reading["pm100 standard"],
-	aqi_reading["pm10 env"],
-	aqi_reading["pm25 env"],
-	aqi_reading["pm100 env"],
-	aqi_reading["particles 03um"],
-	aqi_reading["particles 05um"],
-	aqi_reading["particles 10um"],
-	aqi_reading["particles 25um"],
-	aqi_reading["particles 50um"],
-	aqi_reading["particles 100um"]
+    
+    (aqi_reading["pm10 standard"],
+    aqi_reading["pm25 standard"],
+    aqi_reading["pm100 standard"],
+    aqi_reading["pm10 env"],
+    aqi_reading["pm25 env"],
+    aqi_reading["pm100 env"],
+    aqi_reading["particles 03um"],
+    aqi_reading["particles 05um"],
+    aqi_reading["particles 10um"],
+    aqi_reading["particles 25um"],
+    aqi_reading["particles 50um"],
+    aqi_reading["particles 100um"]
         ) = struct.unpack(">HHHHHHHHHHHH", buffer[4:28])
     
-	uos.dupterm(UART(0, 115200), 1)
-	return aqi_reading
+    uos.dupterm(UART(0, 115200), 1)
+    return aqi_reading
 
 def get_average_reading(n=5):
     """gets an average reading"""
