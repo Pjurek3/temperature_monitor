@@ -11,10 +11,21 @@ from sht40_micropython import SHT40, __version__
 import secrets
 import config
 
+from pms5003 import process_data
+
+
+print("Starting air quality process with version: ")
+print(config.__version__)
+
 # this is used to allow us to skip the loop and allow direct access to repl
 # if pin 14 is broght low (normally high), then we automatically go to repl
 # this avoids long delays due to normal deep sleep mode
 skip_pin = machine.Pin(14, machine.Pin.IN, machine.Pin.PULL_UP)
+
+# configure RTC.ALARM0 to be able to wake the device
+# turn on LED for tracking
+led = machine.Pin(2, machine.Pin.OUT)
+pms5003_set = machine.Pin(config.pms5003_pins['set'], machine.Pin.OUT)
 
     
 if skip_pin.value() < 1:
@@ -89,5 +100,35 @@ while True:
     led.value(1)
     wdt.feed()
     gc.collect()
+    
+    #now PMS5003 reading
+    print("blinking light to start")
+    led.value(0)
+    time.sleep(0.5)
+    led.value(1)
+    time.sleep(0.5)
+    led.value(0)
+    time.sleep(0.5)
+    led.value()
+    #f.write(r'starting loop\n')
+    led.value(0)
+
+    print("activating active mode")
+    pms5003_set.value(1)
+
+    # indicating to user its on with led light
+    print("turn on led light")
+
+    # waiting 10 seconds for process to stabilize before reading
+    time.sleep(10)
+
+    process_data(n=config.avg_data_points)
+
+    led.value(1)
+
+    print("put passive mode")
+    pms5003_set.value(0)
+    
+    
     # multiply by 1000 to convert expected input to seconds since function expects ms
     deep_sleep(config.time_between_readings*1000)

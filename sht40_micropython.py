@@ -7,9 +7,6 @@ import machine
 import struct
 import time
 
-__version__ = '0.0.5'
-__repo__ = 'tbd'
-
 _SHT4X_DEFAULT_ADDR = const(0x44)  # SHT4X I2C Address
 _SHT4X_READSERIAL = const(0x89)  # Read Out of Serial Register
 _SHT4X_SOFTRESET = const(0x94)  # Soft Reset
