@@ -81,16 +81,17 @@ aio = AdafruitIO(username=secrets.ADAFRUIT_IO_USERNAME, key=secrets.ADAFRUIT_IO_
 url_temperature = '/feeds/office-temperature.office-temperature/data'
 url_humidity = '/feeds/office-temperature.office-humidity/data'
 
+#wdt = machine.WDT()  # enable it with a timeout of 2s
 
 while True:
 
     # turning light on to start
     led.value(0)
 
-    wdt = machine.WDT()  # enable it with a timeout of 2s
-    wdt.feed()
+
+    #wdt.feed()
     results = sht40.measure()
-    wdt.feed()
+    #wdt.feed()
     """
     with open('data.txt', 'a+') as f:
         f.write('{}, {}, {}\n'.format(results[0], results[1], time.localtime()))
@@ -102,7 +103,7 @@ while True:
     led.value(0)
     
     aio.send(value=results[0], url = url_humidity)
-    wdt.feed()
+    #wdt.feed()
     aio.send(value=results[1], url = url_temperature)
     
     # blink led once to indicate we received data
@@ -114,48 +115,52 @@ while True:
     time.sleep(0.5)
     led.value(0)
     
-    wdt.feed()
+    #wdt.feed()
     gc.collect()
     
     
     #now PMS5003 reading
     print("blinking light to start")
     led.value(0)
-    wdt.feed()
+    #wdt.feed()
     time.sleep(0.5)
     led.value(1)
-    wdt.feed()
+    #wdt.feed()
     time.sleep(0.5)
     led.value(0)
     time.sleep(0.5)
     led.value()
     #f.write(r'starting loop\n')
     led.value(0)
-    wdt.feed()
+    #wdt.feed()
 
-    """
+    
     print("activating active mode")
-    pms5003_set.value(1)
+    try:
+      pms5003_set.value(1)
 
-    # indicating to user its on with led light
-    print("turn on led light")
+      # indicating to user its on with led light
+      print("turn on led light")
 
-    # waiting 10 seconds for process to stabilize before reading
-    for i in range(10):
-      time.sleep(1)
-      wdt.feed()
+      # waiting 10 seconds for process to stabilize before reading
+      for i in range(10):
+        time.sleep(1)
+        #wdt.feed()
 
-    process_data(n=config.avg_data_points)
-    wdt.feed()
+      process_data(n=config.avg_data_points)
+      #wdt.feed()
 
-    led.value(1)
+      led.value(1)
 
-    print("put passive mode")
-    pms5003_set.value(0)
-    wdt.feed()
+      print("put passive mode")
+      pms5003_set.value(0)
+    except:
+      print('pms reading failed')
+    #wdt.feed()
     
     
-    """
+    
     gc.collect()
     # multiply by 1000 to convert expected input to seconds since function expects ms
+    print('going to sleep')
     deep_sleep(config.time_between_readings*1000)

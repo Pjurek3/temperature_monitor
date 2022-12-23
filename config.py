@@ -1,6 +1,6 @@
 """file to contain all configurations within the program."""
 
-__version__ = '0.0.5'
+__version__ = '0.0.6'
 __repo__ = 'tbd'
 
 # used to set the i2c frequency
@@ -13,7 +13,7 @@ scl_pin = 4
 sda_pin = 5 
 
 # defines time in seconds between reading
-time_between_readings = 60
+time_between_readings = 180
 
 # temp until we refactor
 sleep_time = time_between_readings
